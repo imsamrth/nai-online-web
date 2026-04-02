@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nai - Find. Book. Glow. India's Smartest Salon App</title>
+<meta name="description" content="Nai helps you discover nearby salons and barbers, book appointments instantly, skip the wait, and get personalized grooming recommendations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1612;
+    --ink-soft: #4a4240;
+    --ink-muted: #8a8280;
+    --cream: #faf8f5;
+    --warm-white: #ffffff;
+    --accent: #c8825a;
+    --accent-light: #f0d4c4;
+    --accent-deep: #a05e3a;
+    --gold: #d4a84b;
+    --surface: #f5f1ec;
+    --card-bg: #ffffff;
+    --border: rgba(26,22,18,0.08);
+    --shadow-soft: 0 4px 32px rgba(26,22,18,0.07);
+    --shadow-card: 0 2px 20px rgba(26,22,18,0.09);
+    --r: 18px;
+    --r-sm: 10px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3,h4 { font-family: 'Playfair Display', serif; line-height: 1.2; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(250,248,245,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 5%;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px;
+    transition: box-shadow .3s;
+  }
+  nav.scrolled { box-shadow: var(--shadow-soft); }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem; font-weight: 800;
+    color: var(--ink); letter-spacing: -0.5px;
+    text-decoration: none; cursor: pointer;
+  }
+
+  .nav-links {
+    display: flex; gap: 2rem; list-style: none;
+    align-items: center;
+  }
+  .nav-links a {
+    text-decoration: none; color: var(--ink-soft);
+    font-size: .9rem; font-weight: 500;
+    transition: color .2s; cursor: pointer;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  .nav-cta {
+    background: var(--ink);
+    color: #fff !important;
+    padding: .55rem 1.25rem;
+    border-radius: 50px;
+    font-weight: 600 !important;
+    font-size: .85rem !important;
+    transition: background .2s, transform .15s !important;
+  }
+  .nav-cta:hover { background: var(--accent) !important; transform: scale(1.03); }
+
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger span { width: 24px; height: 2px; background: var(--ink); border-radius: 2px; transition: .3s; }
+
+  /* ─── BUTTONS ─── */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: var(--accent);
+    color: #fff; font-weight: 600; font-size: 1rem;
+    padding: .85rem 2rem; border-radius: 50px;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: background .2s, transform .15s, box-shadow .2s;
+    box-shadow: 0 4px 20px rgba(200,130,90,0.35);
+  }
+  .btn-primary:hover { background: var(--accent-deep); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(200,130,90,0.4); }
+
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: transparent;
+    color: var(--ink); font-weight: 600; font-size: 1rem;
+    padding: .8rem 1.8rem; border-radius: 50px;
+    text-decoration: none; border: 2px solid var(--border);
+    cursor: pointer;
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .btn-secondary:hover { border-color: var(--accent); background: var(--accent-light); transform: translateY(-2px); }
+
+  .btn-dark {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: var(--ink);
+    color: #fff; font-weight: 600; font-size: 1rem;
+    padding: .85rem 2rem; border-radius: 50px;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: background .2s, transform .15s;
+  }
+  .btn-dark:hover { background: #2e2926; transform: translateY(-2px); }
+
+  /* ─── SECTION BASE ─── */
+  section { padding: 100px 5%; }
+  .section-tag {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent-deep);
+    font-size: .78rem; font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase; padding: .35rem .9rem; border-radius: 50px;
+    margin-bottom: 1.2rem;
+  }
+  .section-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 1rem; }
+  .section-sub { font-size: 1.1rem; color: var(--ink-soft); max-width: 560px; line-height: 1.7; }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    padding-top: 120px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse 70% 60% at 80% 50%, #f0d4c4 0%, transparent 65%),
+                radial-gradient(ellipse 50% 40% at 10% 80%, #f5ede5 0%, transparent 60%);
+  }
+
+  .hero-content { position: relative; z-index: 1; }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 50px; padding: .4rem 1rem;
+    font-size: .82rem; font-weight: 500; color: var(--ink-soft);
+    margin-bottom: 1.8rem;
+    box-shadow: var(--shadow-soft);
+    animation: fadeUp .8s ease both;
+  }
+  .eyebrow-dot { width: 8px; height: 8px; background: #4caf50; border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(1.3)} }
+
+  .hero-title {
+    font-size: clamp(2.8rem, 5.5vw, 4.5rem);
+    font-weight: 800; line-height: 1.1;
+    margin-bottom: 1.5rem;
+    animation: fadeUp .8s .1s ease both;
+  }
+  .hero-title em { font-style: normal; color: var(--accent); }
+
+  .hero-sub {
+    font-size: 1.15rem; color: var(--ink-soft);
+    max-width: 480px; line-height: 1.75;
+    margin-bottom: 2.5rem;
+    animation: fadeUp .8s .2s ease both;
+  }
+
+  .hero-ctas {
+    display: flex; flex-wrap: wrap; gap: 1rem;
+    margin-bottom: 3rem;
+    animation: fadeUp .8s .3s ease both;
+  }
+
+  .hero-trust {
+    display: flex; align-items: center; gap: 1.2rem;
+    animation: fadeUp .8s .4s ease both;
+  }
+  .trust-avatars { display: flex; }
+  .trust-avatars span {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 2px solid white;
+    background: linear-gradient(135deg, var(--accent-light), var(--accent));
+    margin-left: -8px;
+    font-size: .65rem; display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700;
+  }
+  .trust-avatars span:first-child { margin-left: 0; }
+  .trust-text { font-size: .83rem; color: var(--ink-soft); }
+  .trust-text strong { color: var(--ink); }
+
+  /* Hero image section */
+  .hero-visual {
+    position: relative; z-index: 1;
+    display: flex; justify-content: center; align-items: center;
+    animation: fadeUp .9s .2s ease both;
+  }
+  .hero-image-container {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+  }
+  .hero-image-container img {
+    width: 100%;
+    border-radius: 24px;
+    box-shadow: 0 40px 80px rgba(26,22,18,0.2);
+    object-fit: cover;
+  }
+  .floating-badge {
+    position: absolute;
+    background: white; border-radius: 14px; padding: .7rem 1rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    display: flex; align-items: center; gap: .6rem;
+    font-size: .78rem; font-weight: 600; color: var(--ink);
+    white-space: nowrap;
+  }
+  .badge-icon { font-size: 1.2rem; }
+  .badge-sub { font-size: .65rem; color: var(--ink-soft); font-weight: 400; }
+  .fb-1 { top: 10%; right: -30px; animation: float 4s ease-in-out infinite; }
+  .fb-2 { bottom: 15%; left: -30px; animation: float 4s 1.5s ease-in-out infinite; }
+  .fb-3 { bottom: 45%; right: -40px; animation: float 4s 0.8s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── HOW IT WORKS ─── */
+  #how { background: var(--surface); }
+
+  .steps-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem; margin-top: 3.5rem; position: relative;
+  }
+  .steps-container::before {
+    content: ''; position: absolute; top: 40px; left: 10%; right: 10%;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--accent) 0, var(--accent) 8px, transparent 8px, transparent 16px);
+    z-index: 0;
+  }
+  .step {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; position: relative; z-index: 1;
+  }
+  .step-num {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: white; border: 3px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; margin-bottom: 1.5rem;
+    box-shadow: 0 4px 20px rgba(200,130,90,0.2);
+    transition: background .2s, color .2s, transform .3s;
+  }
+  .step:hover .step-num { background: var(--accent); transform: scale(1.1); }
+  .step-title { font-size: 1rem; font-weight: 700; margin-bottom: .5rem; }
+  .step-desc { font-size: .88rem; color: var(--ink-soft); line-height: 1.6; }
+
+  /* ─── SOLUTION / FEATURES ─── */
+  #solution { background: var(--cream); }
+
+  .solution-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-top: 3.5rem;
+  }
+  .sol-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 2.2rem;
+    transition: box-shadow .3s, transform .2s;
+    position: relative; overflow: hidden;
+  }
+  .sol-card::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 4px; height: 100%; background: var(--accent);
+    transform: scaleY(0); transform-origin: bottom;
+    transition: transform .3s;
+  }
+  .sol-card:hover::before { transform: scaleY(1); }
+  .sol-card:hover { box-shadow: var(--shadow-card); transform: translateY(-4px); }
+  .sol-icon {
+    width: 56px; height: 56px; border-radius: 14px;
+    background: var(--accent-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; margin-bottom: 1.2rem;
+  }
+  .sol-title { font-size: 1.15rem; font-weight: 700; margin-bottom: .6rem; }
+  .sol-desc { font-size: .9rem; color: var(--ink-soft); line-height: 1.65; }
+  .sol-card-img {
+    width: 100%; height: 140px; object-fit: cover;
+    border-radius: 10px; margin-bottom: 1rem;
+  }
+
+  /* ─── HOME SERVICES ─── */
+  #home-services { background: var(--surface); }
+
+  .services-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem; margin-top: 3rem;
+  }
+  .service-tile {
+    background: white; border-radius: var(--r);
+    padding: 2rem 1.5rem; text-align: center;
+    border: 1px solid var(--border);
+    transition: box-shadow .3s, transform .2s;
+    cursor: default;
+  }
+  .service-tile:hover { box-shadow: var(--shadow-card); transform: translateY(-5px); }
+  .service-emoji { font-size: 2.5rem; margin-bottom: 1rem; }
+  .service-name { font-weight: 700; font-size: .95rem; margin-bottom: .4rem; }
+  .service-desc { font-size: .82rem; color: var(--ink-soft); }
+
+  /* ─── PERSONALIZATION ─── */
+  #personalization { background: var(--cream); }
+
+  .pers-inner {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 5rem; align-items: center;
+  }
+  .pers-graphic {
+    background: var(--ink);
+    border-radius: 24px; padding: 2.5rem;
+    color: white;
+    position: relative; overflow: hidden;
+  }
+  .pers-graphic::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(200,130,90,.3) 0%, transparent 60%);
+  }
+  .pers-tag-row { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1.5rem; position: relative; z-index: 1; }
+  .pers-tag {
+    padding: .4rem .9rem; border-radius: 50px;
+    font-size: .78rem; font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.06);
+  }
+  .pers-tag.active { background: var(--accent); border-color: var(--accent); color: white; }
+  .pers-result-cards { display: flex; flex-direction: column; gap: .8rem; position: relative; z-index: 1; }
+  .pers-result-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px; padding: 1rem;
+    display: flex; align-items: center; gap: .8rem;
+  }
+  .prc-icon { font-size: 1.5rem; }
+  .prc-info .prc-name { font-size: .85rem; font-weight: 700; color: white; }
+  .prc-info .prc-meta { font-size: .72rem; color: rgba(255,255,255,.5); }
+  .prc-match {
+    margin-left: auto; background: rgba(200,130,90,.2);
+    color: var(--accent-light); border-radius: 8px;
+    padding: .25rem .6rem; font-size: .72rem; font-weight: 700;
+    white-space: nowrap;
+  }
+  .pers-points { display: flex; flex-direction: column; gap: 1.5rem; }
+  .pers-point { display: flex; align-items: flex-start; gap: .9rem; }
+  .pp-bullet {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--accent); flex-shrink: 0; margin-top: 6px;
+  }
+  .pp-title { font-weight: 700; margin-bottom: .3rem; }
+  .pp-desc { font-size: .88rem; color: var(--ink-soft); }
+
+  /* ─── TESTIMONIALS ─── */
+  #testimonials { background: var(--surface); }
+
+  .stats-row {
+    display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center;
+    margin-bottom: 4rem;
+  }
+  .stat-pill {
+    text-align: center;
+    background: white; border-radius: 16px; padding: 1.5rem 2.5rem;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-soft);
+  }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem; font-weight: 800; color: var(--accent); line-height: 1;
+    margin-bottom: .3rem;
+  }
+  .stat-label { font-size: .85rem; color: var(--ink-soft); }
+
+  .testi-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .testi-card {
+    background: white; border-radius: var(--r);
+    padding: 2rem; border: 1px solid var(--border);
+    transition: box-shadow .3s, transform .2s;
+  }
+  .testi-card:hover { box-shadow: var(--shadow-card); transform: translateY(-4px); }
+  .testi-stars { color: var(--gold); font-size: 1rem; margin-bottom: 1rem; letter-spacing: 2px; }
+  .testi-text { font-size: .9rem; color: var(--ink-soft); line-height: 1.7; margin-bottom: 1.5rem; font-style: italic; }
+  .testi-author { display: flex; align-items: center; gap: .8rem; }
+  .testi-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .9rem; color: white; flex-shrink: 0;
+  }
+  .testi-name { font-weight: 700; font-size: .9rem; }
+  .testi-role { font-size: .78rem; color: var(--ink-muted); }
+
+  /* ─── FAQ ─── */
+  #faq { background: var(--cream); }
+
+  .faq-inner {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .faq-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .faq-list { display: flex; flex-direction: column; gap: .8rem; }
+  .faq-item {
+    border: 1px solid var(--border); border-radius: var(--r);
+    overflow: hidden; background: white;
+    transition: box-shadow .2s;
+  }
+  .faq-item:hover { box-shadow: var(--shadow-soft); }
+  .faq-q {
+    padding: 1.3rem 1.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer; font-weight: 600; font-size: .95rem;
+    gap: 1rem;
+  }
+  .faq-arrow {
+    color: var(--accent); transition: transform .3s; font-size: 1.4rem; flex-shrink: 0;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--accent-light); display: flex; align-items: center; justify-content: center;
+  }
+  .faq-item.open .faq-arrow { transform: rotate(45deg); }
+  .faq-a {
+    padding: 0 1.5rem;
+    font-size: .88rem; color: var(--ink-soft); line-height: 1.7;
+    max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .3s;
+  }
+  .faq-item.open .faq-a { max-height: 300px; padding: 0 1.5rem 1.3rem; }
+
+  /* ─── FINAL CTA ─── */
+  #final-cta {
+    background: var(--ink); color: white;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  #final-cta::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(200,130,90,0.15) 0%, transparent 70%);
+  }
+  #final-cta .section-title { color: white; max-width: 700px; margin: 0 auto 1.2rem; }
+  #final-cta .section-sub { color: rgba(255,255,255,.6); margin: 0 auto 3rem; max-width: 500px; }
+  .final-ctas { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; position: relative; z-index: 1; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: #110e0c; color: white;
+    padding: 60px 5% 30px;
+  }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+  .footer-logo {
+    font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 800; margin-bottom: .8rem;
+    cursor: pointer;
+  }
+  .footer-desc { font-size: .88rem; color: rgba(255,255,255,.45); line-height: 1.7; margin-bottom: 1.5rem; max-width: 260px; }
+  .footer-social { display: flex; gap: .8rem; }
+  .social-link {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none; font-size: .9rem;
+    transition: background .2s, transform .2s;
+    cursor: pointer;
+  }
+  .social-link:hover { background: var(--accent); transform: translateY(-2px); }
+  .social-link svg { width: 18px; height: 18px; fill: white; }
+  .footer-col-title { font-weight: 700; font-size: .9rem; color: white; margin-bottom: 1.2rem; letter-spacing: .3px; }
+  .footer-links { display: flex; flex-direction: column; gap: .6rem; }
+  .footer-links a {
+    color: rgba(255,255,255,.45); text-decoration: none; font-size: .85rem;
+    transition: color .2s; cursor: pointer;
+  }
+  .footer-links a:hover { color: var(--accent); }
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,.07);
+    padding-top: 1.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 1rem;
+    font-size: .82rem; color: rgba(255,255,255,.3);
+  }
+
+  /* ─── MOBILE MENU ─── */
+  .mobile-menu {
+    display: none;
+    position: fixed; inset: 0; z-index: 99;
+    background: var(--cream);
+    padding: 80px 5% 40px;
+    flex-direction: column; gap: 1.5rem;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    font-size: 1.3rem; font-weight: 600; color: var(--ink);
+    text-decoration: none; padding: .5rem 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .mobile-close { position: absolute; top: 20px; right: 5%; font-size: 1.5rem; cursor: pointer; }
+
+  /* ─── SUB PAGES ─── */
+  .sub-page {
+    display: none;
+    padding-top: 68px;
+    min-height: 100vh;
+  }
+  .sub-page.active { display: block; }
+  #main-page.active { display: block; }
+  #main-page { display: block; }
+
+  .sub-page-hero {
+    background: linear-gradient(135deg, var(--ink) 0%, #2a1f1a 100%);
+    color: white;
+    padding: 80px 5% 60px;
+    text-align: center;
+  }
+  .sub-page-hero .section-title { color: white; margin-bottom: .8rem; }
+  .sub-page-hero .section-sub { color: rgba(255,255,255,.65); margin: 0 auto; }
+
+  .sub-page-content {
+    padding: 60px 5%;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .sub-page-content h3 {
+    font-size: 1.4rem; margin: 2rem 0 1rem; color: var(--ink);
+  }
+  .sub-page-content p {
+    font-size: .95rem; color: var(--ink-soft); line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+  .sub-page-content ul {
+    margin: 1rem 0 1.5rem 1.5rem;
+    color: var(--ink-soft);
+    font-size: .95rem; line-height: 1.8;
+  }
+
+  /* Partner page cards */
+  .partner-feature-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem; margin: 2rem 0;
+  }
+  .partner-feature-card {
+    background: white; border: 1px solid var(--border);
+    border-radius: var(--r); padding: 2rem;
+    transition: box-shadow .3s, transform .2s;
+  }
+  .partner-feature-card:hover { box-shadow: var(--shadow-card); transform: translateY(-4px); }
+  .partner-feature-card .pf-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .partner-feature-card .pf-title { font-weight: 700; font-size: 1.05rem; margin-bottom: .5rem; }
+  .partner-feature-card .pf-desc { font-size: .88rem; color: var(--ink-soft); line-height: 1.6; }
+
+  .partner-stat-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem; margin: 3rem 0;
+  }
+  .ps-card {
+    background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+    border-radius: var(--r); padding: 2rem; text-align: center; color: white;
+  }
+  .ps-card .ps-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem; font-weight: 800; margin-bottom: .3rem;
+  }
+  .ps-card .ps-label { font-size: .85rem; opacity: .85; }
+
+  /* Contact form */
+  .contact-form {
+    max-width: 600px; margin: 2rem auto 0;
+  }
+  .form-group { margin-bottom: 1.5rem; }
+  .form-group label {
+    display: block; font-weight: 600; font-size: .9rem;
+    margin-bottom: .5rem; color: var(--ink);
+  }
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%; padding: .85rem 1.2rem;
+    border: 1.5px solid var(--border); border-radius: 12px;
+    font-family: 'DM Sans', sans-serif; font-size: .95rem;
+    background: white; color: var(--ink);
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(200,130,90,0.15);
+  }
+  .form-group textarea { resize: vertical; min-height: 120px; }
+  .form-submit {
+    width: 100%; padding: 1rem;
+    background: var(--accent); color: white;
+    border: none; border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: background .2s, transform .15s;
+  }
+  .form-submit:hover { background: var(--accent-deep); transform: translateY(-2px); }
+  .form-success {
+    display: none; text-align: center; padding: 3rem;
+    background: #f0fdf4; border-radius: var(--r);
+    border: 1px solid #86efac;
+  }
+  .form-success.show { display: block; }
+  .form-success h3 { color: #166534; margin-bottom: .5rem; }
+  .form-success p { color: #15803d; }
+
+  /* partner FAQ */
+  .partner-faq-section { margin-top: 3rem; }
+
+  /* ─── IMAGE GALLERY ROW ─── */
+  .img-row {
+    display: flex; gap: 1.5rem; margin: 3rem 0;
+    overflow: hidden;
+  }
+  .img-row img {
+    flex: 1; height: 220px; object-fit: cover;
+    border-radius: var(--r);
+    transition: transform .3s;
+  }
+  .img-row img:hover { transform: scale(1.03); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1024px) {
+    #hero { grid-template-columns: 1fr; padding-top: 100px; text-align: center; }
+    .hero-ctas { justify-content: center; }
+    .hero-trust { justify-content: center; }
+    .hero-visual { margin-top: 2rem; }
+    .hero-image-container { max-width: 400px; }
+    .fb-1, .fb-2, .fb-3 { display: none; }
+    .pers-inner { grid-template-columns: 1fr; }
+    .faq-inner { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .steps-container::before { display: none; }
+    .solution-grid { grid-template-columns: 1fr; }
+    .partner-stat-row { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 768px) {
+    section { padding: 70px 5%; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .partner-stat-row { grid-template-columns: 1fr; }
+    .img-row { flex-direction: column; }
+    .img-row img { height: 180px; }
+    .hero-sub { margin-left: auto; margin-right: auto; }
+  }
+
+  /* ─── SCROLL REVEAL ─── */
+  .reveal {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .reveal.visible {
+    opacity: 1; transform: translateY(0);
+  }
+
+  /* Back to top */
+  .back-to-top {
+    position: fixed; bottom: 30px; right: 30px;
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--accent); color: white;
+    display: none; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 1.3rem;
+    box-shadow: 0 4px 20px rgba(200,130,90,0.4);
+    transition: transform .2s, opacity .3s;
+    z-index: 50; border: none;
+  }
+  .back-to-top.show { display: flex; }
+  .back-to-top:hover { transform: translateY(-3px); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a class="nav-logo" onclick="showPage('main')">Nai</a>
+  <ul class="nav-links">
+    <li><a href="#solution" onclick="goSection('solution')">Features</a></li>
+    <li><a href="#how" onclick="goSection('how')">How It Works</a></li>
+    <li><a onclick="showPage('partner')" style="cursor:pointer">For Partners</a></li>
+    <li><a href="#hero" class="nav-cta" onclick="goSection('hero')">Download App</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <span class="mobile-close" onclick="toggleMenu()">&#10005;</span>
+  <a href="#solution" onclick="goSection('solution');toggleMenu()">Features</a>
+  <a href="#how" onclick="goSection('how');toggleMenu()">How It Works</a>
+  <a href="#home-services" onclick="goSection('home-services');toggleMenu()">Home Services</a>
+  <a onclick="showPage('partner');toggleMenu()" style="cursor:pointer">For Partners</a>
+  <a href="#hero" onclick="goSection('hero');toggleMenu()" class="btn-primary" style="text-align:center;justify-content:center;">Download App</a>
+</div>
+
+<!-- ═══════ MAIN PAGE ═══════ -->
+<div id="main-page">
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-dot"></span>
+      Now launching across India
+    </div>
+    <h1 class="hero-title">
+      Find the right salon.<br>
+      <em>Skip the wait.</em><br>
+      Book smarter.
+    </h1>
+    <p class="hero-sub">
+      Nai connects you with trusted salons and barbers nearby so you can discover, compare, and book in minutes. No more uncertainty. No more wasted time.
+    </p>
+    <div class="hero-ctas">
+      <a href="#" class="btn-primary">&#11015; Download the App</a>
+      <a onclick="showPage('partner')" class="btn-secondary" style="cursor:pointer">For Salon Partners &rarr;</a>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-avatars">
+        <span>A</span><span>R</span><span>P</span><span>S</span>
+      </div>
+      <div class="trust-text">
+        <strong>Early access</strong> users already loving Nai &middot; Joining free
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-image-container">
+      <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=80" alt="Premium salon interior with modern styling chairs" loading="lazy">
+      <div class="floating-badge fb-1">
+        <span class="badge-icon">&#9889;</span>
+        <div>
+          <div>Instant Booking</div>
+          <div class="badge-sub">No calls needed</div>
+        </div>
+      </div>
+      <div class="floating-badge fb-2">
+        <span class="badge-icon">&#11088;</span>
+        <div>
+          <div>4.9 Rating</div>
+          <div class="badge-sub">Verified salons</div>
+        </div>
+      </div>
+      <div class="floating-badge fb-3">
+        <span class="badge-icon">&#128137;</span>
+        <div>
+          <div>Hello &#128075;</div>
+          <div class="badge-sub">Find your style today</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS (above solution) -->
+<section id="how">
+  <div style="text-align:center; max-width:600px; margin:0 auto;">
+    <div class="section-tag">How It Works</div>
+    <h2 class="section-title">From discovery to doorstep<br>in 4 simple steps.</h2>
+    <p class="section-sub" style="margin:0 auto;">Getting a great grooming experience has never been this easy.</p>
+  </div>
+  <div class="steps-container">
+    <div class="step reveal">
+      <div class="step-num">&#128134;</div>
+      <div class="step-title">Choose Your Service</div>
+      <div class="step-desc">Haircut, facial, bridal prep, mehndi, or a full grooming session. Pick what you need.</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">&#128205;</div>
+      <div class="step-title">Discover Nearby</div>
+      <div class="step-desc">Browse verified salons and barbers near your location, sorted by rating and availability.</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">&#128269;</div>
+      <div class="step-title">Compare and Pick</div>
+      <div class="step-desc">View photos, prices, ratings, and available slots. Make an informed choice in seconds.</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">&#9989;</div>
+      <div class="step-title">Book in Minutes</div>
+      <div class="step-desc">Confirm your appointment instantly. Get reminders so you never miss your slot.</div>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:3rem;">
+    <a href="#" class="btn-primary">Start for Free. Download Now</a>
+  </div>
+</section>
+
+<!-- SOLUTION / FEATURES (4 combined cards) -->
+<section id="solution">
+  <div style="text-align:center; max-width:650px; margin:0 auto;">
+    <h2 class="section-title">Meet Nai. Your smart<br>grooming companion.</h2>
+    <p class="section-sub" style="margin:0 auto;">Nai brings everything you need for a great grooming experience into one beautifully simple app.</p>
+  </div>
+
+  <div class="img-row reveal">
+    <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&q=80" alt="Salon styling">
+    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&q=80" alt="Barber at work">
+    <img src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=400&q=80" alt="Hair styling">
+  </div>
+
+  <div class="solution-grid">
+    <div class="sol-card reveal">
+      <div class="sol-icon">&#128506;</div>
+      <div class="sol-title">Find All Salons and Barbers Here</div>
+      <div class="sol-desc">Browse verified salons and barbers near you with photos, services, ratings, and real prices. Discover nearby options, reduce your waiting time, and book specific slots. All in one place.</div>
+    </div>
+    <div class="sol-card reveal">
+      <div class="sol-icon">&#128197;</div>
+      <div class="sol-title">Easy Slot Booking, Zero Waiting</div>
+      <div class="sol-desc">Pick a time, confirm your slot, and show up. See live wait times and book specific slots. No calls, no walking in and waiting 45 minutes, no surprises.</div>
+    </div>
+    <div class="sol-card reveal">
+      <div class="sol-icon">&#10024;</div>
+      <div class="sol-title">Find Your Personal Stylist</div>
+      <div class="sol-desc">Nai learns your preferences and helps you discover salons and services that match your style, needs, and budget. Get personalized recommendations and professional consultation to look your best.</div>
+    </div>
+    <div class="sol-card reveal">
+      <div class="sol-icon">&#127968;</div>
+      <div class="sol-title">Trusted Home Services and Verified Salons</div>
+      <div class="sol-desc">Book professional grooming at home for special occasions, from bridal mehndi to everyday convenience. Every salon on Nai is verified with real ratings and reviews from real customers.</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOME SERVICES -->
+<section id="home-services">
+  <div style="text-align:center; max-width:600px; margin:0 auto 1rem;">
+    <div class="section-tag">Home & Occasion Services</div>
+    <h2 class="section-title">Grooming that comes to you.</h2>
+    <p class="section-sub" style="margin:0 auto;">For life's special moments and everyday convenience, Nai brings professional grooming right to your door.</p>
+  </div>
+  <div class="services-grid reveal" style="margin-top:3rem;">
+    <div class="service-tile">
+      <div class="service-emoji">&#127800;</div>
+      <div class="service-name">Bridal Mehndi</div>
+      <div class="service-desc">Trusted mehndi artists for your big day, booked with ease.</div>
+    </div>
+    <div class="service-tile">
+      <div class="service-emoji">&#128155;</div>
+      <div class="service-name">Haldi & Ceremony Prep</div>
+      <div class="service-desc">Full grooming and beauty prep for pre-wedding functions.</div>
+    </div>
+    <div class="service-tile">
+      <div class="service-emoji">&#128134;</div>
+      <div class="service-name">Home Facial & Skincare</div>
+      <div class="service-desc">Professional facials and skincare services at your comfort.</div>
+    </div>
+    <div class="service-tile">
+      <div class="service-emoji">&#9986;&#65039;</div>
+      <div class="service-name">At-Home Haircut</div>
+      <div class="service-desc">Skip the salon trip. Get a premium cut where you are.</div>
+    </div>
+    <div class="service-tile">
+      <div class="service-emoji">&#128133;</div>
+      <div class="service-name">Nail & Styling</div>
+      <div class="service-desc">Manicures, nail art, and full styling from certified pros.</div>
+    </div>
+    <div class="service-tile">
+      <div class="service-emoji">&#127775;</div>
+      <div class="service-name">Date-Ready Packages</div>
+      <div class="service-desc">Full grooming packages for when you really need to look your best.</div>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:3rem;">
+    <a href="#" class="btn-primary">Book Home Services on Nai</a>
+  </div>
+</section>
+
+<!-- PERSONALIZATION / SMART RECOMMENDATIONS -->
+<section id="personalization">
+  <div class="pers-inner">
+    <div>
+      <div class="section-tag">Smart Recommendations</div>
+      <h2 class="section-title">Nai isn't just a directory.<br>It knows your style.</h2>
+      <p class="section-sub" style="margin-bottom:2.5rem;">
+        Nai uses your preferences, location, and history to surface the options that actually make sense for you, not just what's closest or cheapest.
+      </p>
+      <div class="pers-points">
+        <div class="pers-point">
+          <div class="pp-bullet"></div>
+          <div>
+            <div class="pp-title">Preferences-based discovery</div>
+            <div class="pp-desc">Set your style type, preferred services, and budget. Nai filters the noise and shows you what fits.</div>
+          </div>
+        </div>
+        <div class="pers-point">
+          <div class="pp-bullet"></div>
+          <div>
+            <div class="pp-title">Smarter decisions, every time</div>
+            <div class="pp-desc">With each visit, Nai gets better at knowing what kind of salon experience you're looking for.</div>
+          </div>
+        </div>
+        <div class="pers-point">
+          <div class="pp-bullet"></div>
+          <div>
+            <div class="pp-title">Find the right professional</div>
+            <div class="pp-desc">Not just any barber or stylist, the right one for your hair type, face shape, and preferred style.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pers-graphic reveal">
+      <div class="section-tag" style="margin-bottom:1rem;">Your Style Profile</div>
+      <div class="pers-tag-row">
+        <span class="pers-tag active">Short Hair</span>
+        <span class="pers-tag active">Beard Trim</span>
+        <span class="pers-tag">Skin Fade</span>
+        <span class="pers-tag active">Budget &#8377;200-400</span>
+        <span class="pers-tag">Facial</span>
+        <span class="pers-tag">Near Office</span>
+      </div>
+      <div style="color:rgba(255,255,255,.5);font-size:.78rem;margin-bottom:1rem;">Top matches for you &rarr;</div>
+      <div class="pers-result-cards">
+        <div class="pers-result-card">
+          <div class="prc-icon">&#9986;&#65039;</div>
+          <div class="prc-info">
+            <div class="prc-name">The Cut Room</div>
+            <div class="prc-meta">0.7 km &middot; Specializes in fades</div>
+          </div>
+          <div class="prc-match">98% match</div>
+        </div>
+        <div class="pers-result-card">
+          <div class="prc-icon">&#128136;</div>
+          <div class="prc-info">
+            <div class="prc-name">Royal Barbers</div>
+            <div class="prc-meta">1.2 km &middot; Beard specialist</div>
+          </div>
+          <div class="prc-match">94% match</div>
+        </div>
+        <div class="pers-result-card">
+          <div class="prc-icon">&#127775;</div>
+          <div class="prc-info">
+            <div class="prc-name">Looks & Co</div>
+            <div class="prc-meta">1.4 km &middot; Top rated</div>
+          </div>
+          <div class="prc-match">91% match</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS / EARLY VOICES -->
+<section id="testimonials">
+  <div style="text-align:center; max-width:600px; margin:0 auto;">
+    <div class="section-tag">Early Voices</div>
+    <h2 class="section-title">People who tried Nai<br>love it immediately.</h2>
+  </div>
+  <div class="stats-row reveal" style="margin-top:3rem;">
+    <div class="stat-pill">
+      <div class="stat-num">500+</div>
+      <div class="stat-label">Early users onboarded</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-num">50+</div>
+      <div class="stat-label">Salons joining</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-num">8+</div>
+      <div class="stat-label">Cities launching soon</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-num">4.9&#9733;</div>
+      <div class="stat-label">Average early rating</div>
+    </div>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card reveal">
+      <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="testi-text">"I used to spend 30 minutes just figuring out which salon to go to on weekends. Nai solved that completely. I found a fantastic barber near my office and now I book every two weeks without even thinking."</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:linear-gradient(135deg,#667eea,#764ba2);">AR</div>
+        <div>
+          <div class="testi-name">Arjun Rathod</div>
+          <div class="testi-role">Software Engineer, Pune</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="testi-text">"I was skeptical at first but the home service booking for my sister's wedding was seamless. We got mehndi, facial, and pre-bridal done all through Nai. Every professional showed up on time. Absolutely brilliant."</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:linear-gradient(135deg,#f093fb,#f5576c);">PD</div>
+        <div>
+          <div class="testi-name">Priya Desai</div>
+          <div class="testi-role">Content Creator, Mumbai</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="testi-text">"As a salon owner in Lucknow, finding new walk-in customers was always unpredictable. Since listing on Nai, I've seen a clear uptick in new faces who found me through the app. The booking system alone saved me hours a week."</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:linear-gradient(135deg,var(--accent-light),var(--accent));">SK</div>
+        <div>
+          <div class="testi-name">Suman Kumar</div>
+          <div class="testi-role">Salon Owner, Lucknow</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="testi-text">"I travel a lot for work and Nai helps me find great barbers in every new city. The profiles are detailed, the ratings are honest, and booking takes literally two taps. I don't understand why this didn't exist sooner."</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:linear-gradient(135deg,#4facfe,#00f2fe);">RK</div>
+        <div>
+          <div class="testi-name">Rohan Kapoor</div>
+          <div class="testi-role">Sales Manager, Delhi</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="testi-text">"The personalized recommendations are what set Nai apart. I told it I prefer natural products and shorter styles, and it started showing me salons that actually match that. It feels like the app actually understands me."</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:linear-gradient(135deg,#43e97b,#38f9d7);">NM</div>
+        <div>
+          <div class="testi-name">Nisha Mathur</div>
+          <div class="testi-role">Teacher, Jaipur</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="testi-text">"I manage two salons and the partner dashboard on Nai is incredibly clean. My staff can see all upcoming bookings, we get reminders for walk-ins, and our profile on the app looks more professional than any website we could afford."</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:linear-gradient(135deg,#fa709a,#fee140);">AA</div>
+        <div>
+          <div class="testi-name">Aisha Ansari</div>
+          <div class="testi-role">Salon Chain Owner, Hyderabad</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="faq-inner">
+    <div class="faq-header">
+      <div class="section-tag">FAQ</div>
+      <h2 class="section-title">Got questions? We've got answers.</h2>
+      <p class="section-sub" style="margin: 0 auto;">Everything you need to know about Nai before you get started.</p>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)">What is Nai? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">Nai is India's smart salon and grooming platform. It helps you discover nearby salons and barbers, compare options, and book appointments easily through a mobile app with no calls needed.</div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)">Is Nai available in my city? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">Nai is currently launching across major Indian cities. We're expanding fast. Sign up on the app to be notified when Nai reaches your city, and to get early access when it does.</div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)">Can I book appointments through the app? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">Yes, that's one of the core features. You can browse available slots, pick a time, and confirm your booking in a few taps. You'll receive reminders before your appointment.</div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)">Does Nai support home services? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">Yes. Nai connects you with verified grooming professionals who offer home services including bridal mehndi, facial, at-home haircuts, and more. Perfect for special occasions or everyday convenience.</div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)">Is Nai free to use? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">Absolutely. The Nai app is completely free for customers. Browse, discover, and book salons without any subscription or hidden fee.</div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)">How does personalization work on Nai? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">When you set up your profile, you share your preferences like hair type, style choices, preferred budget, and services you like. Nai uses this to surface more relevant salon and barber recommendations over time.</div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)">How can my salon partner with Nai? <span class="faq-arrow">+</span></div>
+        <div class="faq-a">Salons and barbers can apply to join Nai through the Partner section. Once approved, you get a full profile on the app, a booking management dashboard, and access to customers searching for your services nearby.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section id="final-cta">
+  <div style="position:relative;z-index:1;">
+    <div class="section-tag" style="background:rgba(200,130,90,0.2);color:var(--accent-light);margin:0 auto 1.5rem;">Your Next Grooming Experience</div>
+    <h2 class="section-title">Smarter. Faster.<br>More personal.</h2>
+    <p class="section-sub">Join thousands of Indians already discovering better salons and booking smarter with Nai.</p>
+    <div class="final-ctas">
+      <a href="#" class="btn-primary" style="font-size:1.05rem;padding:1rem 2.5rem;">&#11015; Download Nai, It's Free</a>
+      <a onclick="showPage('partner')" class="btn-secondary" style="color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.2);cursor:pointer;">Join as a Salon Partner &rarr;</a>
+    </div>
+    <p style="color:rgba(255,255,255,.35);font-size:.82rem;margin-top:2rem;">Available on iOS & Android &middot; Free to download &middot; No credit card needed</p>
+  </div>
+</section>
+
+</div><!-- end main-page -->
+
+
+<!-- ═══════ PARTNER PAGE ═══════ -->
+<div id="partner-page" class="sub-page">
+  <div class="sub-page-hero">
+    <div class="section-tag" style="background:rgba(255,255,255,0.15);color:white;">For Salon Partners</div>
+    <h2 class="section-title">Grow your salon with Nai</h2>
+    <p class="section-sub">Whether you run a single chair or a full salon chain, Nai helps you reach more customers, fill more slots, and build your digital brand.</p>
+  </div>
+  <div class="sub-page-content">
+    <div class="partner-stat-row">
+      <div class="ps-card"><div class="ps-num">3x</div><div class="ps-label">More visibility</div></div>
+      <div class="ps-card"><div class="ps-num">Free</div><div class="ps-label">To list and start</div></div>
+      <div class="ps-card"><div class="ps-num">0</div><div class="ps-label">Tech knowledge needed</div></div>
+      <div class="ps-card"><div class="ps-num">24/7</div><div class="ps-label">Booking enabled</div></div>
+    </div>
+
+    <h3>Why Partner with Nai?</h3>
+    <div class="partner-feature-grid">
+      <div class="partner-feature-card">
+        <div class="pf-icon">&#128227;</div>
+        <div class="pf-title">More Visibility</div>
+        <div class="pf-desc">Appear in local searches when customers look for salons near them. Get discovered by people who are actively searching.</div>
+      </div>
+      <div class="partner-feature-card">
+        <div class="pf-icon">&#128198;</div>
+        <div class="pf-title">Booking Management</div>
+        <div class="pf-desc">Manage all your appointments from one simple dashboard. No double bookings, no missed customers.</div>
+      </div>
+      <div class="partner-feature-card">
+        <div class="pf-icon">&#128200;</div>
+        <div class="pf-title">Grow Faster</div>
+        <div class="pf-desc">Attract new customers who are actively searching for your services. Build your brand and reputation online.</div>
+      </div>
+      <div class="partner-feature-card">
+        <div class="pf-icon">&#128172;</div>
+        <div class="pf-title">Real Ratings</div>
+        <div class="pf-desc">Build your reputation through verified customer reviews on Nai. Stand out with genuine feedback from real customers.</div>
+      </div>
+    </div>
+
+    <h3>Partner Benefits</h3>
+    <p>When you join Nai as a partner, you get access to a complete suite of tools designed to help your salon grow. Your salon profile appears in local discovery, you get a full booking management dashboard, smart analytics to understand your customers, and priority support from the Nai team.</p>
+    <p>There are no hidden fees to get started. Nai is built for Indian salons, by people who understand the Indian grooming industry.</p>
+
+    <div class="partner-faq-section">
+      <h3>Partner FAQ</h3>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How do I list my salon on Nai? <span class="faq-arrow">+</span></div>
+          <div class="faq-a">Simply fill out the contact form below or download the Nai Partner app. Our team will review your application and set up your profile within 48 hours.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Is there a fee to join as a partner? <span class="faq-arrow">+</span></div>
+          <div class="faq-a">No. Joining Nai as a salon partner is completely free. There are no upfront costs, listing fees, or hidden charges to get started.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">What kind of salons can join? <span class="faq-arrow">+</span></div>
+          <div class="faq-a">All types of grooming businesses are welcome, from single-chair barbers to multi-location salon chains. If you provide grooming services, Nai is built for you.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How does the booking system work? <span class="faq-arrow">+</span></div>
+          <div class="faq-a">You set your available time slots, services, and prices through the partner dashboard. Customers book through the app, and you receive instant notifications. It's that simple.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:3rem;">
+      <h3 style="text-align:center;">Ready to grow your salon?</h3>
+      <p style="text-align:center; max-width:500px; margin:0 auto 1.5rem;">Fill out the form below and our team will get in touch with you shortly.</p>
+      <div class="contact-form" id="partnerForm">
+        <div class="form-group">
+          <label>Salon / Business Name</label>
+          <input type="text" placeholder="Enter your salon name" required>
+        </div>
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" placeholder="Enter your full name" required>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" placeholder="+91 XXXXX XXXXX" required>
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" placeholder="Enter your city" required>
+        </div>
+        <div class="form-group">
+          <label>Message (optional)</label>
+          <textarea placeholder="Tell us about your salon..."></textarea>
+        </div>
+        <button class="form-submit" onclick="submitForm('partnerForm','partnerSuccess')">Join as Partner</button>
+      </div>
+      <div class="form-success" id="partnerSuccess">
+        <h3>&#127881; Thank you for your interest!</h3>
+        <p>We've received your details and our team will reach out to you within 24 hours.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════ ABOUT PAGE ═══════ -->
+<div id="about-page" class="sub-page">
+  <div class="sub-page-hero">
+    <div class="section-tag" style="background:rgba(255,255,255,0.15);color:white;">Our Story</div>
+    <h2 class="section-title">About Nai</h2>
+    <p class="section-sub">Building India's smartest salon discovery and booking platform.</p>
+  </div>
+  <div class="sub-page-content">
+    <h3>Our Mission</h3>
+    <p>Nai was born from a simple frustration: finding a good salon shouldn't be this hard. In a country of 1.4 billion people, the grooming industry remains largely unorganized, offline, and unpredictable. We're here to change that.</p>
+    <p>Our mission is to make grooming effortless for every Indian by connecting people with trusted salons and barbers through smart technology, honest reviews, and seamless booking.</p>
+
+    <div class="img-row">
+      <img src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=400&q=80" alt="Salon">
+      <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&q=80" alt="Barber">
+    </div>
+
+    <h3>What We Believe</h3>
+    <p>We believe everyone deserves a great grooming experience regardless of where they live or what their budget is. We believe salon owners deserve modern tools to grow their business. And we believe technology should simplify life, not complicate it.</p>
+
+    <h3>Our Approach</h3>
+    <p>Nai is built with deep empathy for both customers and salon partners. Every feature is designed based on real conversations with salon owners, barbers, and customers across India. We don't just build tech. We build trust.</p>
+
+    <h3>The Team</h3>
+    <p>Nai is built by a passionate team of designers, engineers, and grooming industry experts who are committed to transforming how India experiences personal care. We're based in India and building for India.</p>
+
+    <div style="text-align:center; margin-top:3rem;">
+      <a href="#" class="btn-primary" onclick="showPage('contact');return false;">Get in Touch &rarr;</a>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════ PRIVACY POLICY PAGE ═══════ -->
+<div id="privacy-page" class="sub-page">
+  <div class="sub-page-hero">
+    <h2 class="section-title">Privacy Policy</h2>
+    <p class="section-sub">Your privacy matters to us. Here's how we handle your data.</p>
+  </div>
+  <div class="sub-page-content">
+    <p><strong>Last updated:</strong> April 2026</p>
+
+    <h3>1. Information We Collect</h3>
+    <p>When you use Nai, we may collect information you provide directly such as your name, email address, phone number, location, and grooming preferences. We also collect usage data like how you interact with the app, search history, and booking details to improve your experience.</p>
+
+    <h3>2. How We Use Your Information</h3>
+    <p>We use your information to provide and improve the Nai platform, personalize your recommendations, process bookings, communicate with you about your appointments, and ensure the safety and security of our platform.</p>
+
+    <h3>3. Data Sharing</h3>
+    <p>We share relevant booking information with salon partners to fulfill your appointments. We do not sell your personal data to third parties. We may share anonymized, aggregated data for analytics purposes.</p>
+
+    <h3>4. Data Security</h3>
+    <p>We implement industry-standard security measures to protect your personal information. All data transmission is encrypted, and we regularly audit our security practices.</p>
+
+    <h3>5. Your Rights</h3>
+    <p>You have the right to access, update, or delete your personal information at any time through the app settings. You can also contact us to request data deletion or to opt out of marketing communications.</p>
+
+    <h3>6. Cookies and Tracking</h3>
+    <p>Our website and app may use cookies and similar technologies to improve functionality and analyze usage patterns. You can manage cookie preferences through your browser settings.</p>
+
+    <h3>7. Changes to This Policy</h3>
+    <p>We may update this privacy policy from time to time. We will notify you of any significant changes through the app or via email.</p>
+
+    <h3>8. Contact Us</h3>
+    <p>If you have any questions about this privacy policy, please reach out to us at <strong>privacy@nai.app</strong></p>
+  </div>
+</div>
+
+
+<!-- ═══════ TERMS OF SERVICE PAGE ═══════ -->
+<div id="terms-page" class="sub-page">
+  <div class="sub-page-hero">
+    <h2 class="section-title">Terms of Service</h2>
+    <p class="section-sub">Please read these terms carefully before using Nai.</p>
+  </div>
+  <div class="sub-page-content">
+    <p><strong>Last updated:</strong> April 2026</p>
+
+    <h3>1. Acceptance of Terms</h3>
+    <p>By accessing or using the Nai platform, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p>
+
+    <h3>2. Description of Service</h3>
+    <p>Nai is a salon discovery and booking platform that connects customers with grooming service providers. We facilitate the booking process but are not responsible for the services provided by salon partners.</p>
+
+    <h3>3. User Accounts</h3>
+    <p>You are responsible for maintaining the confidentiality of your account credentials. You agree to provide accurate and complete information when creating your account and to update it as necessary.</p>
+
+    <h3>4. Booking and Cancellation</h3>
+    <p>Bookings made through Nai are subject to availability and salon partner policies. Cancellation policies may vary by salon. We encourage you to review specific salon policies before booking.</p>
+
+    <h3>5. User Conduct</h3>
+    <p>You agree to use Nai only for lawful purposes. You may not misuse the platform, submit false reviews, or engage in any activity that harms other users or salon partners.</p>
+
+    <h3>6. Intellectual Property</h3>
+    <p>All content, design, and technology on the Nai platform are owned by Nai Technologies Pvt. Ltd. You may not reproduce, distribute, or create derivative works without our written permission.</p>
+
+    <h3>7. Limitation of Liability</h3>
+    <p>Nai acts as a platform connecting customers with salon partners. We are not liable for the quality of services provided by salons or for any disputes between users and service providers.</p>
+
+    <h3>8. Changes to Terms</h3>
+    <p>We reserve the right to modify these terms at any time. Continued use of the platform after changes constitutes acceptance of the updated terms.</p>
+
+    <h3>9. Contact</h3>
+    <p>For questions about these terms, reach out to us at <strong>legal@nai.app</strong></p>
+  </div>
+</div>
+
+
+<!-- ═══════ CONTACT PAGE ═══════ -->
+<div id="contact-page" class="sub-page">
+  <div class="sub-page-hero">
+    <div class="section-tag" style="background:rgba(255,255,255,0.15);color:white;">Get in Touch</div>
+    <h2 class="section-title">Contact Us</h2>
+    <p class="section-sub">Have a question, feedback, or want to work with us? We'd love to hear from you.</p>
+  </div>
+  <div class="sub-page-content">
+    <div style="text-align:center; margin-bottom:3rem;">
+      <p>Fill out the form below and our team will connect with you soon.</p>
+    </div>
+    <div class="contact-form" id="contactForm">
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" placeholder="Enter your full name" required>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" placeholder="you@example.com" required>
+      </div>
+      <div class="form-group">
+        <label>Subject</label>
+        <select>
+          <option value="">Select a topic</option>
+          <option>General Inquiry</option>
+          <option>Partnership / Sales</option>
+          <option>Customer Support</option>
+          <option>Bug Report</option>
+          <option>Feedback</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea placeholder="Tell us how we can help..." required></textarea>
+      </div>
+      <button class="form-submit" onclick="submitForm('contactForm','contactSuccess')">Send Message</button>
+    </div>
+    <div class="form-success" id="contactSuccess">
+      <h3>&#128140; Message sent!</h3>
+      <p>Thank you for reaching out. Our team will get back to you within 24 hours.</p>
+    </div>
+
+    <div style="text-align:center; margin-top:3rem; padding: 2rem; background: var(--surface); border-radius: var(--r);">
+      <p style="font-weight:600; color:var(--ink); margin-bottom:.5rem;">You can also reach us at</p>
+      <p style="color:var(--accent); font-weight:700; font-size:1.1rem;">hello@nai.app</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- FOOTER (appears on all pages) -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo" onclick="showPage('main')">Nai</div>
+      <div class="footer-desc">India's smart salon and grooming platform. Discover, compare, and book salons near you or schedule a professional at home.</div>
+      <div class="footer-social">
+        <!-- Instagram -->
+        <a class="social-link" href="https://www.instagram.com/nai_online_?igsh=MTNxMzd0ZG9sdTk1Zg==" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        </a>
+        <!-- LinkedIn -->
+        <a class="social-link" href="https://www.linkedin.com/company/nai-online/" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <!-- Facebook -->
+        <a class="social-link" href="https://www.facebook.com/share/18hVW1Nzwh/" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <!-- YouTube -->
+        <a class="social-link" href="https://www.youtube.com/@AmanRoy-s9o5i" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Product</div>
+      <div class="footer-links">
+        <a href="#solution" onclick="goSection('solution')">Features</a>
+        <a href="#how" onclick="goSection('how')">How It Works</a>
+        <a href="#home-services" onclick="goSection('home-services')">Home Services</a>
+        <a href="#personalization" onclick="goSection('personalization')">Smart Picks</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">For Partners</div>
+      <div class="footer-links">
+        <a onclick="showPage('partner')" style="cursor:pointer">Join as Partner</a>
+        <a onclick="showPage('partner')" style="cursor:pointer">Salon Dashboard</a>
+        <a onclick="showPage('partner')" style="cursor:pointer">Partner Benefits</a>
+        <a onclick="showPage('partner')" style="cursor:pointer">Partner FAQ</a>
+        <a onclick="showPage('contact')" style="cursor:pointer">Contact Sales</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <div class="footer-links">
+        <a onclick="showPage('about')" style="cursor:pointer">About Nai</a>
+        <a onclick="showPage('privacy')" style="cursor:pointer">Privacy Policy</a>
+        <a onclick="showPage('terms')" style="cursor:pointer">Terms of Service</a>
+        <a onclick="showPage('contact')" style="cursor:pointer">Contact Us</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2025 Nai Technologies Pvt. Ltd. All rights reserved.</span>
+    <span>Made with &#10084;&#65039; for India</span>
+  </div>
+</footer>
+
+<!-- BACK TO TOP -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8593;</button>
+
+<script>
+  // Navbar scroll effect
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+    const btn = document.getElementById('backToTop');
+    btn.classList.toggle('show', window.scrollY > 500);
+  });
+
+  // Mobile menu
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  // FAQ accordion
+  function toggleFaq(el) {
+    const item = el.parentElement;
+    const isOpen = item.classList.contains('open');
+    // Close siblings within the same list
+    const parent = item.parentElement;
+    parent.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // Page routing (SPA)
+  function showPage(page) {
+    // Hide all
+    document.getElementById('main-page').style.display = 'none';
+    document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none');
+
+    if (page === 'main') {
+      document.getElementById('main-page').style.display = 'block';
+    } else {
+      document.getElementById(page + '-page').style.display = 'block';
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Navigate to section on main page
+  function goSection(id) {
+    document.getElementById('main-page').style.display = 'block';
+    document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none');
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }
+
+  // Form submission simulation
+  function submitForm(formId, successId) {
+    const form = document.getElementById(formId);
+    const inputs = form.querySelectorAll('input[required], textarea[required]');
+    let valid = true;
+    inputs.forEach(inp => {
+      if (!inp.value.trim()) {
+        inp.style.borderColor = '#e74c3c';
+        valid = false;
+      } else {
+        inp.style.borderColor = '';
+      }
+    });
+    if (valid) {
+      form.style.display = 'none';
+      document.getElementById(successId).classList.add('show');
+    }
+  }
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal, .sol-card, .service-tile, .testi-card, .step, .faq-item, .stat-pill').forEach(el => {
+    el.classList.add('reveal');
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
